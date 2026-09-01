@@ -1,8 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("tailwindcss");
 
-$app-bg: #141414;
+@theme {
+  --color-app-bg: #141414;
+  --color-app-surface: #1c1c1c;
+  --color-brand-gold: #d6a34a;
+  --color-brand-orange: #e05929;
+  --color-brand-yellow: #d9a036;
+  --color-traffic-red: #e73c3e;
+  --color-traffic-green: #65c466;
+
+  --font-sans: 'Roboto', sans-serif;
+  --font-display: 'Roboto', sans-serif;
+}
 
 body {
   @apply bg-app-bg text-white m-0 min-h-screen flex flex-col font-sans;
