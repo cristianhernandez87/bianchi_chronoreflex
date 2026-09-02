@@ -28,7 +28,6 @@ function App() {
         </div>
       )}
 
-      {/* Botón de Exportación */}
       {scores.length > 0 && (
         <button
           onClick={() => downloadScoresCSV(scores)}

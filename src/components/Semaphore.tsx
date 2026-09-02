@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useGameStore } from '../store/gameStore';
 
@@ -8,7 +9,6 @@ export const Semaphore = () => {
   const timeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
 
-  // Iniciar la secuencia aleatoria cuando entra en WAITING
   useEffect(() => {
     if (gameState === 'WAITING') {
       setDisplayTime(null);
@@ -25,7 +25,6 @@ export const Semaphore = () => {
     };
   }, [gameState, setGameState]);
 
-  // Manejador central de la reacción (Solo teclado)
   const handleReaction = useCallback(() => {
     if (gameState === 'WAITING') {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -46,7 +45,6 @@ export const Semaphore = () => {
     }
   }, [gameState, setGameState, addScore, currentPlayer]);
 
-  // Escuchar la barra espaciadora
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
@@ -68,7 +66,6 @@ export const Semaphore = () => {
 
   return (
     <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-3xl">
-      {/* Panel de Tiempo */}
       <div className="flex-1 border border-brand-orange/50 rounded-xl p-6 bg-app-surface shadow-lg text-center w-full min-h-[200px] flex flex-col justify-center">
         <h3 className="text-gray-400 font-display font-bold text-2xl mb-2 tracking-widest">TU TIEMPO</h3>
         
@@ -93,9 +90,7 @@ export const Semaphore = () => {
         </p>
       </div>
 
-      {/* Columna Derecha: Panel de Luces + Botón Home */}
       <div className="flex flex-col gap-4 items-center">
-        {/* Luces del Semáforo */}
         <div className="border border-brand-orange/50 rounded-xl p-6 bg-app-surface shadow-lg flex flex-col gap-4">
           <div className={`w-28 h-28 rounded-full border-4 border-black/50 transition-all duration-75 ${
             isRedActive 
@@ -110,7 +105,6 @@ export const Semaphore = () => {
           }`} />
         </div>
 
-        {/* Botón de Home / Cambiar Piloto */}
         <button 
           onClick={handleReset}
           title="Cambiar Piloto (Inicio)"

@@ -9,7 +9,6 @@ export const PlayerForm = () => {
     e.preventDefault();
     if (name.trim().length > 0) {
       setCurrentPlayer(name.trim());
-      // Al enviar, pasamos al estado de espera para montar el semáforo
       setGameState('WAITING'); 
     }
   };
