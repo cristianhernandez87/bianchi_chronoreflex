@@ -9,6 +9,7 @@ export const Semaphore = () => {
   const timeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
 
+  // Iniciar la secuencia aleatoria cuando entra en WAITING
   useEffect(() => {
     if (gameState === 'WAITING') {
       setDisplayTime(null);
@@ -25,6 +26,7 @@ export const Semaphore = () => {
     };
   }, [gameState, setGameState]);
 
+  // Manejador central de la reacción (Espacio o Clic derecho)
   const handleReaction = useCallback(() => {
     if (gameState === 'WAITING') {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -45,27 +47,42 @@ export const Semaphore = () => {
     }
   }, [gameState, setGameState, addScore, currentPlayer]);
 
+  const handleReset = () => {
+    setGameState('IDLE');
+    setCurrentPlayer('');
+  };
+
+  // Escuchar Barra Espaciadora y tecla Escape para volver al inicio
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
         e.preventDefault();
         handleReaction();
+      } else if (e.code === 'Escape') {
+        e.preventDefault();
+        handleReset();
       }
     };
+    
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleReaction]);
 
-  const handleReset = () => {
-    setGameState('IDLE');
-    setCurrentPlayer('');
+  // Manejar el clic derecho para la luz verde (evitando el menú del navegador)
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleReaction();
   };
 
   const isRedActive = gameState === 'WAITING' || gameState === 'EARLY_CLICK';
   const isGreenActive = gameState === 'READY' || gameState === 'FINISHED';
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-3xl">
+    <div 
+      className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-3xl select-none"
+      onContextMenu={handleContextMenu}
+    >
+      {/* Panel de Tiempo */}
       <div className="flex-1 border border-brand-orange/50 rounded-xl p-6 bg-app-surface shadow-lg text-center w-full min-h-[200px] flex flex-col justify-center">
         <h3 className="text-gray-400 font-display font-bold text-2xl mb-2 tracking-widest">TU TIEMPO</h3>
         
@@ -85,12 +102,14 @@ export const Semaphore = () => {
         
         <p className="text-gray-400 font-light text-sm mt-4 uppercase tracking-wide">
           {gameState === 'FINISHED' || gameState === 'EARLY_CLICK' 
-            ? 'Presione tecla ESPACIO para reintentar' 
-            : 'Presione tecla ESPACIO en cuanto vea el verde'}
+            ? 'Presione ESPACIO / CLIC DERECHO para reintentar (ESC para inicio)' 
+            : 'Presione ESPACIO / CLIC DERECHO en cuanto vea el verde'}
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 items-center">
+      {/* Columna Derecha: Panel de Luces + Botón Home */}
+      <div className="flex flex-col gap-4 items-center" onContextMenu={(e) => e.stopPropagation()}>
+        {/* Luces del Semáforo */}
         <div className="border border-brand-orange/50 rounded-xl p-6 bg-app-surface shadow-lg flex flex-col gap-4">
           <div className={`w-28 h-28 rounded-full border-4 border-black/50 transition-all duration-75 ${
             isRedActive 
@@ -105,10 +124,11 @@ export const Semaphore = () => {
           }`} />
         </div>
 
+        {/* Botón de Home / Cambiar Piloto (Clic izquierdo normal) */}
         <button 
           onClick={handleReset}
-          title="Cambiar Piloto (Inicio)"
-          className="w-full bg-app-surface border border-gray-700 text-gray-400 hover:text-brand-gold hover:border-brand-gold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider font-bold shadow-md group"
+          title="Cambiar Piloto (Inicio - También tecla ESC)"
+          className="w-full bg-app-surface border border-gray-700 text-gray-400 hover:text-brand-gold hover:border-brand-gold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider font-bold shadow-md group cursor-pointer"
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
